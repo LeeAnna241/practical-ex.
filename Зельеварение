@@ -1,0 +1,90 @@
+using System;
+class Program
+{
+    static void Main()
+    {
+        const int maxActions = 100; // Максимальное количество действий
+        string[][] actions = new string[maxActions][];
+        int actionCount = 0; // Счетчик введенных действий
+        string begining = ""; // Начало строки
+
+        Console.WriteLine("Введите действия с ингредиентами (введите 'END' для завершения ввода):");
+
+        while (true)
+        {
+            string action = Console.ReadLine();
+
+            if (action.Equals("END", StringComparison.OrdinalIgnoreCase))
+            {
+                break; // Завершаем ввод при вводе "END"
+            }
+
+            // Разделяем действие на команду и ингредиенты
+            string[] parts = action.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length == 0)
+            {
+                Console.WriteLine("введите команду и ингредиенты.");
+                continue;
+            }
+
+            string command = parts[0]; // Первая часть - команда
+            string[] ingredients = new string[parts.Length - 1]; // Остальные части - ингредиенты
+            Array.Copy(parts, 1, ingredients, 0, parts.Length - 1); // Копируем ингредиенты
+
+            // Сохраняем команду и ингредиенты в массив действий
+            if (actionCount < maxActions)
+            {
+                actions[actionCount] = new string[ingredients.Length + 1]; // +1 для команды
+                actions[actionCount][0] = command; // Сохраняем команду
+                Array.Copy(ingredients, 0, actions[actionCount], 1, ingredients.Length); // копируем ингредиенты
+                actionCount++;
+            }
+            else
+            {
+                Console.WriteLine("Достигнуто максимальное количество действий.");
+                continue;
+            }
+        }
+
+        // итоговое заклинание - объединяем все результаты действий
+        if (actionCount > 0)
+        {
+            string finalSpell = string.Empty;
+            for (int i = 0; i < actionCount; i++)
+            {
+                string commandFinal = actions[i][0].ToUpper(); 
+                string ingredientsFinal = string.Join("", actions[i], 1, actions[i].Length - 1); 
+
+                switch (commandFinal)
+                {
+                    case "MIX":
+                        finalSpell += ingredientsFinal + "XM";
+                        begining += "MX";
+                        break;
+                    case "WATER":
+                        finalSpell += ingredientsFinal + "TW";
+                        begining += "WT";
+                        break;
+                    case "DUST":
+                        finalSpell += ingredientsFinal + "TD";
+                        begining += "DT"; 
+                        break;
+                    case "FIRE":
+                        finalSpell += ingredientsFinal + "RF";
+                        begining += "FR";
+                        break;
+                    default:
+                        Console.WriteLine("Неизвестная команда: " + commandFinal);
+                        break;
+                }
+            }
+
+            finalSpell = begining + finalSpell;
+            Console.WriteLine($"Итоговое заклинание: {finalSpell}");
+        }
+        else
+        {
+            Console.WriteLine("Не было введено ни одного действия.");
+        }
+    }
+}
