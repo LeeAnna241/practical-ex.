@@ -1,0 +1,133 @@
+using System;
+class Program
+{
+    public static void Main(string[] args)
+    {
+        int[,] matrix = {
+            {3, 1, 2, 3},
+            {7, 6, 5, 4},
+            {4, 8, 9, 7}
+        };
+
+        int rows = matrix.GetLength(0);
+        int cols = matrix.GetLength(1);
+
+        // Задание 1
+        int cnt = 0;
+        int r = 0;
+        int[,] ind = new int[rows, 2]; 
+        
+         for (int i = 0; i < rows; i++) 
+        {
+            for (int j = 0; j < cols-1; j++)
+            {
+                for (int x = 0; x < cols - 1; x++) 
+                {
+                    if ((matrix[i, j] == matrix[i, x + 1]) & (x+1 != j))
+                    {
+                        cnt += 1;
+                        ind[i, 0] = j;
+                        ind[i, 1] = x+1; 
+                    }
+                }
+                    
+            }
+        
+
+            if (cnt != 1)
+            {
+                ind[i, 0] = 0;
+                ind[i, 1] = 0;
+            }
+        }
+        for (int t = 0; t < rows; t++)
+        {
+            if (ind[t, 0] + ind[t, 1] > 0)
+            {
+                Console.WriteLine($"({ind[t, 0]}, {ind[t, 1]})");
+                r ++;
+            }
+            else if (r== 0)
+            {
+                Console.WriteLine("не нашлось таких пар");
+            }
+        }
+    
+    // Задание 2
+    Console.WriteLine("-----------");
+
+    int mn = int.MaxValue;
+    int mx = int.MinValue;
+    int mn_Index = 0, mx_Index = 0;
+    for( int i = 0; i< rows; i++) 
+    {
+        for( int j=0; j< cols; j++)
+        {
+            if (matrix[i, j] < mn)
+            {
+                mn = matrix[i, j];
+                mn_Index = j;
+            }
+            if(matrix[i, j] > mx)
+            {
+                mx = matrix[i, j];
+                mx_Index = j;
+            }
+        }
+    }
+    int[] c = new int[rows];
+    for ( int i = 0;i< rows; i++)
+    {
+        c[i] = matrix[i, mn_Index];
+    }
+    for (int i = 0; i< rows; i++)
+    {
+        matrix[i,mn_Index]=matrix[i, mx_Index];
+    }
+    for (int i = 0;i < rows; i++)
+    {
+        matrix[i, mx_Index] = c[i];
+    }
+    for (int i = 0; i < rows; i++)
+    {
+        for(int j = 0; j< cols; j++)
+        {
+            Console.Write(matrix[i, j]+" " );
+        }
+        Console.WriteLine();
+    }
+    
+
+    // Задание 3
+    // третье почему-то выводится только без 1-го и 2-го заданий
+    Console.WriteLine("-----------");
+    
+        if ((rows > 1) & (cols > 1))
+        {
+            for (int f = 0; f < rows; f++)
+            {
+                int dif = matrix[f, 0] - matrix[f, 1];
+                bool check = true;               
+                if (dif <= 0) 
+                {
+                    continue;
+                }                   
+                else
+                {                    
+                    for (int g = 1; g < cols; g++)
+                    {                        
+                        if ((dif <= 0) || (matrix[f, g - 1] - matrix[f, g] != dif))
+                        {
+                            check = false;
+                        } 
+                    }                            
+                    if (check) 
+                    {
+                            Console.WriteLine($"последовательность строки {f+1} - убывающая"); 
+                    }
+                }
+                check = true;
+            }
+        }
+    }
+}
