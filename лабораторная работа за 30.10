@@ -1,0 +1,107 @@
+using System;
+class Program    
+{
+    // Задача 1
+    public static int[] RearrangeArray(int[] b)
+    {
+        int positiveCount = 0;
+        int negativeCount = 0;
+
+        foreach (int num in b)
+        {
+            if (num >= 0)
+            {
+                positiveCount++;
+            }
+            else
+            {
+                negativeCount++;
+            }
+        }
+
+        int[] a = new int[b.Length];
+        int positiveIndex = 0;
+        int negativeIndex = positiveCount;
+
+        foreach (int num in b)
+        {
+            if (num >= 0)
+            {
+                a[positiveIndex] = num;
+                positiveIndex++;
+            }
+            else
+            {
+                a[negativeIndex] = num;
+                negativeIndex++;
+            }
+        }
+
+        return a;
+    }
+
+    static void Main(string[] args)        
+    {
+        Console.Write("Введите длину массива: ");
+        int len = Convert.ToInt32(Console.ReadLine());
+
+
+        int[] b = new int[len];
+
+        Console.WriteLine("Введите элементы массива:");
+        for (int i = 0; i < len; i++)
+        {
+            b[i] = Convert.ToInt32(Console.ReadLine());
+        }
+
+        int[] a = RearrangeArray(b);
+        Console.WriteLine("Исходный массив: [" + string.Join(", ", b) + "]");
+        Console.WriteLine("Выходной массив: [" + string.Join(", ", a) + "]");
+
+        // Задача 3
+        Console.WriteLine("\n-------");            
+        int count = 0;
+        for (int i = 0; i < len; i++)            
+        {
+            if (Math.Abs(a[i] % 2) == 0) 
+            {
+                count++; 
+            }            
+            }  
+            Console.WriteLine("Количество четных элементов: " + count);
+            // Задача 2
+            Console.WriteLine("\n---------");            
+            if (a.Length > 1)
+            {                
+                int dif = a[0] - a[1];
+                bool check = true;               
+                if (dif <= 0) 
+                {
+                    Console.WriteLine("элементы массива не являются равномерно убывающей последовательностью");
+                }
+                                
+                else
+                {                    
+                    for (int i = 2; i < len; i++)
+                    {                        
+                        if (dif <= 0 || a[i - 1] - a[i] != dif)
+                        {
+                            check = false;
+                        } 
+                    }                            
+                    Console.WriteLine(dif);                  
+                    if (check) 
+                    {
+                        Console.WriteLine("элементы массива являются равномерно возрастающей последовательностью"); 
+                    }                 
+                    else{
+                        Console.WriteLine("Элементы массива не являются равномерно убывающей последовательностью");
+                    } 
+                }
+            }            
+            else
+            {
+            Console.WriteLine("длина массива меньше 2");  
+            }         
+    }
+}
