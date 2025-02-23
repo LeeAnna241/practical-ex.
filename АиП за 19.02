@@ -1,0 +1,134 @@
+using System;
+using System.Runtime.InteropServices.Marshalling;
+using System.Runtime.Intrinsics.Arm;
+namespace lab19_02
+{
+    class Name
+    {
+        public string _name { get; set; }
+
+        public Name(string name)
+        {
+            _name = name;
+        }
+    }
+
+    public interface ICounter
+    {
+        void S();
+        void P();
+    }
+    class Round: Name, ICounter
+    {
+        public int _r;
+        public int s1;
+        public int p1;
+
+        public Round(string name, int r) : base(name)
+        {
+            this._r = r;
+        }
+
+        public void S()
+        {
+            s1 = _r * _r;
+            Console.WriteLine($"Площадь окружности = {s1}");
+        }
+        public void P()
+        {
+            p1 = _r * 2;
+            Console.WriteLine($"Периметр окружности = {p1}");
+        }
+
+    }
+    class Triangle: Name, ICounter
+    {
+        public double _a;
+        public double _s2;
+        public double _p2;
+
+        public Triangle(string name, double a) : base(name)
+        {
+            this._a = a;  
+        }
+
+        public void S()
+        {
+            _s2 = (Math.Sqrt(3) * _a * _a) / 4;
+            Console.WriteLine($"Площадь равностороннего треугольника = {_s2}");
+        }
+        public void P()
+        {
+            _p2 = _a * 3;
+            Console.WriteLine($"Периметр равностороннего треугольника = {_p2}");
+        }
+    }
+    class Square: Name, ICounter
+    {
+        public int _n;
+        public int s3;
+        public int p3;
+
+        public Square(string name, int n) : base(name)
+        {
+            this._n = n;
+        }
+        public void S()
+        {
+            s3 = _n * _n;
+            Console.WriteLine($"Площадь квадрата = {s3}");
+        }
+        public void P()
+        {
+            p3 = _n * 4;
+            Console.WriteLine($"Периметр квадрата = {p3}");
+        }
+    }
+    class Program
+    {
+        static void Main()
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                Console.WriteLine("Введите название фигуры: ");
+                string nm = Console.ReadLine();
+
+                if (nm == "окружность")
+                {
+                    Name rnd = new Name(nm);
+                    Console.WriteLine("Введите диаметр: ");
+                    int rd = Convert.ToInt32(Console.ReadLine());
+                    Round round = new Round(nm, rd);
+                    round.S();
+                    round.P();
+
+                }
+                else if (nm == "квадрат")
+                    
+                {
+                    Name sq_name = new Name(nm);
+                    Console.WriteLine("Введите длину стороны: ");
+                    int a = Convert.ToInt32(Console.ReadLine());
+                    Square sqare = new Square(nm, a);
+                    sqare.S();
+                    sqare.P();
+
+
+                }
+                else if (nm == "равносторонний треугольник")
+                {
+                    Name tr_name = new Name(nm);   
+                    Console.WriteLine("Введите длину стороны: ");
+                    int b = Convert.ToInt32(Console.ReadLine());
+                    Triangle triangle = new Triangle(nm, b);
+                    triangle.S();
+                    triangle.P();
+                }
+                else
+                {
+                    Console.WriteLine("Ошибка заполнения");
+                }
+            }
+        }
+    }
+}
