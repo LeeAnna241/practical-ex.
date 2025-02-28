@@ -33,8 +33,6 @@ namespace Коллекции
                 }
             }
 
-            Console.WriteLine($"После проверки. Открытых: {stack_1.Count}, Закрытых: {lst.Count}");
-
             if (stack_1.Count == 0 && lst.Count == 0)
                 Console.WriteLine("Все правильно");
             else
