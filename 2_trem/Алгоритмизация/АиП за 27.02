@@ -1,0 +1,44 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Коллекции
+{
+    class Program
+    {
+        static void Main()
+        {
+            var stack_1 = new Stack<char>();
+            var lst = new List<char>();
+            Console.WriteLine("Введите выражение со скобками:");
+            string line = Console.ReadLine();
+
+            foreach (char c in line)
+            {
+                if (c == '(' || c == '{' || c == '[') stack_1.Push(c);
+
+                else if (c == ')' || c == '}' || c == ']') lst.Add(c);
+            }
+
+            for (int i = 0; i < lst.Count; i++)
+            {
+                if (stack_1.Count == 0) break; 
+
+                if ((stack_1.Peek(); == '(' && lst[i] == ')') || (stack_1.Peek(); == '{' && lst[i] == '}') || (stack_1.Peek(); == '[' && lst[i] == ']'))
+                {
+                    stack_1.Pop();
+                    lst.RemoveAt(i);
+                    i--; 
+                }
+            }
+
+            Console.WriteLine($"После проверки. Открытых: {stack_1.Count}, Закрытых: {lst.Count}");
+
+            if (stack_1.Count == 0 && lst.Count == 0)
+                Console.WriteLine("Все правильно");
+            else
+                Console.WriteLine("скобки расставлены неправильно!");
+        }
+    }
+}
