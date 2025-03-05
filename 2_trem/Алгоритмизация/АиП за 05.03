@@ -6,6 +6,32 @@ namespace lab_05_03
     {
         static void Main()
         {
+            //задание 2
+            int[] lino = new int[6] {1, 4, 6, 4, 8, 1};
+            HashSet<int> unic_lino = new HashSet<int>(lino);
+            var dict = new Dictionary<int, int>();
+            foreach(var i in unic_lino)
+            {
+                Console.WriteLine(i + " ");
+                dict[i] = 0;
+            }
+
+            foreach (var num in lino)
+            {
+                if (dict.ContainsKey(num))
+                    dict[num]++;
+                else
+                    dict[num] = 1;
+            }
+
+            foreach (var x in dict)
+            {
+                Console.WriteLine($"key: {x.Key}  value: {x.Value}");
+            }
+
+            Console.WriteLine("---------------------");
+
+            //задание 1
             Console.WriteLine("Введите выражение в виде постфиксной польской записи (2 + 2 => 2 2 + ");
             string lines = Console.ReadLine();
             string[] line = lines.Split(' ');
@@ -48,3 +74,5 @@ namespace lab_05_03
         }
     }
 }
+
+    
