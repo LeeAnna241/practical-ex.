@@ -1,0 +1,50 @@
+using System;
+using System.Collections.Generic;
+namespace lab_05_03
+{
+    class Program
+    {
+        static void Main()
+        {
+            Console.WriteLine("Введите выражение в виде постфиксной польской записи (2 + 2 => 2 2 + ");
+            string lines = Console.ReadLine();
+            string[] line = lines.Split(' ');
+            var stack = new Stack<int>();
+
+            foreach (var x in line)
+            {
+                Console.WriteLine(x);
+                if (int.TryParse(x, out int result)) stack.Push(result);
+                else
+                {
+                    if (stack.Count < 2)
+                    {
+                        Console.WriteLine("Выражение введено неправильно!");
+                        return;
+                    }
+                    int first = stack.Pop();
+                    int second = stack.Pop();
+
+                    switch (x)
+                    {
+                        case "+":
+                            stack.Push(first + second);
+                            break;
+                        case "-":
+                            stack.Push(second - first);
+                            break;
+                        case "*":
+                            stack.Push(first * second);
+                            break;
+                        case "/":
+                            stack.Push(second / first);
+                            break;
+                    }
+                }
+
+            }
+            if (stack.Count == 1) Console.WriteLine($"Получившееся значение: {stack.Peek()}");
+            else Console.WriteLine("Ошибка ввода!");
+        }
+    }
+}
