@@ -15,11 +15,6 @@ namespace лаба_за_13_03
     }
     class Program
     {
-        public static void Dct()
-        {
-
-        }
-
         static void Main()
         {
             var dict = new Dictionary<string, int>();
