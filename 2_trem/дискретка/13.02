@@ -1,1 +1,113 @@
-пуньк
+using System;
+using System.Collections.Generic;
+namespace diskr_lab_13_02
+{
+    class Program
+    {
+        static void Main()
+        {
+            int[,] matrix = {
+                { 0, 1, 0, 1, 1, 0},
+                { 1, 0, 0, 1, 0, 0},
+                { 0, 0, 0, 0, 1, 1},
+                { 1, 1, 0, 0, 1, 0},
+                { 1, 0, 1, 1, 0, 0},
+                { 0, 0, 1, 0, 0, 0}
+            };
+
+            int n = matrix.GetLength(0);
+
+            // первый алгоритм
+            bool[] visited = new bool[n];
+            int componentsCount = 0;
+
+            for (int i = 0; i < n; i++)
+            {
+                if (!visited[i])
+                {
+                    DFS(matrix, visited, i);
+                    componentsCount++;
+                }
+            }
+
+            Console.WriteLine("Число компонент графа (первый алгоритм) = " + componentsCount);
+
+            // Второй алгоритм (по компонентам)
+            int[] components = new int[n];
+            for (int i = 0; i < n; i++) components[i] = i + 1; 
+
+            int componentCounter = 1;
+            List<int> previousPoints = new List<int>();
+
+            for (int i = 0; i < n; i++)
+            {
+                previousPoints.Add(i);
+                bool isIsolated = true;
+
+                // соединения
+                foreach (int j in previousPoints)
+                {
+                    if (matrix[i, j] == 1)
+                    {
+                        isIsolated = false;
+                        break;
+                    }
+                }
+
+                if (isIsolated)
+                {
+                    componentCounter++;
+                    components[i] = componentCounter;
+                }
+                else
+                {
+                    // минимальный компонент 
+                    int minComponent = components[i];
+                    for (int j = 0; j < n; j++)
+                    {
+                        if (matrix[i, j] == 1)
+                        {
+                            minComponent = Math.Min(minComponent, components[j]);
+                        }
+                    }
+                    components[i] = minComponent;
+
+                    for (int j = 0; j < n; j++)
+                    {
+                        if (matrix[i, j] == 1)
+                        {
+                            components[j] = minComponent;
+                        }
+                    }
+                }
+            }
+
+            HashSet<int> uniqueComponents = new HashSet<int>(components);
+            Console.WriteLine("Число компонент в графе (второй алгоритм) = " + uniqueComponents.Count);
+        }
+
+        static void DFS(int[,] matrix, bool[] visited, int node)
+        {
+            Stack<int> stack = new Stack<int>();
+            stack.Push(node);
+
+            while (stack.Count > 0)
+            {
+                int current = stack.Pop();
+                if (!visited[current])
+                {
+                    visited[current] = true;
+
+                    for (int i = 0; i < matrix.GetLength(1); i++)
+                    {
+                        if (matrix[current, i] == 1 && !visited[i])
+                        {
+                            stack.Push(i);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
