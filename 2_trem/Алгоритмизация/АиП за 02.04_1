@@ -11,7 +11,6 @@ namespace lab_02_04
             int a = Convert.ToInt32(Console.ReadLine());
             int b = Convert.ToInt32(Console.ReadLine());
 
-        
             var sum = (int x, int y) =>  x + y;
             int _sum = sum(a, b);
             Console.WriteLine("Сумма чисел: " + _sum);
