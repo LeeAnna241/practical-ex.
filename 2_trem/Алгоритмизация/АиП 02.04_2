@@ -1,0 +1,32 @@
+using System;
+using System.Diagnostics.Metrics;
+using System.Collections.Generic;
+public delegate void a_finder();
+namespace lab_02_04
+{
+    class Program
+    {
+        static void Main()
+        {
+            List<string> stuff = new List<string>() { "abs", "dismember", "allergic", "thrilled", "supercalifragilistic" };
+            var print = (string s) =>
+            {
+                if ((s[0]) == 'a')
+                {
+                    return s;
+                }
+                else return null;
+            };
+            foreach (string x in stuff)
+            {
+
+                string _print = print(x);
+                if (_print != null) 
+                {
+                    Console.WriteLine(_print);
+                }
+
+            }
+        }
+    }
+}
