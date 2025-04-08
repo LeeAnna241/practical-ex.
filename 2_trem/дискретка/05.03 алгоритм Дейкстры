@@ -1,0 +1,86 @@
+using System;
+using System.Collections.Generic;
+
+class Program
+{
+    static void Main()
+    {
+        Console.Write("Введите начальную вершину - ");
+        int start = int.Parse(Console.ReadLine()) - 1;
+
+        Console.Write("Введите конечную вершину - ");
+        int end = int.Parse(Console.ReadLine()) - 1;
+
+        int[,] matrix = {
+            { 0, 3, 46, 12, 0 },
+            { 3, 0, 89, 7, 0 },
+            { 46, 0, 0, 2, 6 },
+            { 12, 89, 2, 0, 3 },
+            { 0, 7, 6, 3, 0 }
+        };
+
+        int size = matrix.GetLength(0);
+        int infinity = 1000000; 
+
+        bool[] visited = new bool[size];
+        int[] distance = new int[size];
+        int[] previous = new int[size];
+
+        for (int i = 0; i < size; i++)
+        {
+            distance[i] = (matrix[start, i] != 0) ? matrix[start, i] : infinity;
+            previous[i] = start;
+        }
+
+        distance[start] = 0;
+        visited[start] = true;
+
+        int current = start;
+
+        while (current != end)
+        {
+            int min = infinity;
+            int next = -1;
+
+            for (int i = 0; i < size; i++)
+            {
+                if (!visited[i] && distance[i] < min)
+                {
+                    min = distance[i];
+                    next = i;
+                }
+            }
+
+            if (next == -1)
+                break; 
+
+            visited[next] = true;
+
+            for (int i = 0; i < size; i++)
+            {
+                if (matrix[next, i] != 0 && distance[next] + matrix[next, i] < distance[i])
+                {
+                    distance[i] = distance[next] + matrix[next, i];
+                    previous[i] = next;
+                }
+            }
+
+            current = next;
+        }
+
+        Console.WriteLine("Длина маршрута = " + distance[end]);
+
+        List<int> path = new List<int>();
+        int temp = end;
+
+        while (temp != start)
+        {
+            path.Add(temp + 1);
+            temp = previous[temp];
+        }
+        path.Add(start + 1);
+        path.Reverse();
+
+        Console.WriteLine("Маршрут проходит через вершины: " + string.Join(" ", path));
+    }
+}
