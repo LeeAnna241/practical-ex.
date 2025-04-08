@@ -1,0 +1,71 @@
+using System;
+using System.Collections.Generic;
+
+namespace алгоритм_Прима
+{
+    class Program
+    {
+        static void Main()
+        {
+            int[,] matrix = {
+                { 0, 5, 0, 0, 2, 4 },
+                { 5, 0, 12, 0, 0, 1 },
+                { 0, 12, 0, 9, 0, 3 },
+                { 0, 0, 9, 0, 7, 10 },
+                { 2, 0, 0, 7, 0, 8 },
+                { 4, 1, 3, 10, 8, 0 }
+            };
+
+            int size = matrix.GetLength(0);
+            List<int> points = new List<int>();
+            for (int i = 1; i < size; i++) points.Add(i);
+
+            List<int> visited = new List<int> { 0 };
+            List<List<int>> searchArea = new List<List<int>>();
+            for (int i = 0; i < size; i++) searchArea.Add(new List<int>());
+            int totalWeight = 0;
+
+            while (points.Count != 0)
+            {
+                for (int i = 0; i < size; i++)
+                {
+                    for (int j = 0; j < size; j++)
+                    {
+                        if (visited.Contains(i) && !visited.Contains(j))
+                        {
+                            if (matrix[i, j] != 0)
+                                searchArea[i].Add(matrix[i, j]);
+                        }
+                    }
+                }
+
+                int min = int.MaxValue, from = -1, to = -1;
+
+                for (int i = 0; i < searchArea.Count; i++)
+                {
+                    foreach (var value in searchArea[i])
+                    {
+                        if (value != 0 && value < min)
+                        {
+                            int j = Array.IndexOf(matrix, value, i * size);
+                            if (j >= 0 && j % size != i && !visited.Contains(j % size))
+                            {
+                                min = value;
+                                from = i;
+                                to = j % size;
+                            }
+                        }
+                        break;
+                    }
+                }
+
+                totalWeight += min;
+                visited.Add(to);
+                points.Remove(to);
+                for (int i = 0; i < size; i++) searchArea[i].Clear();
+            }
+
+            Console.WriteLine("Вес остовного дерева: " + totalWeight);
+        }
+    }
+}
