@@ -1,0 +1,96 @@
+using System;
+using System.Collections.Generic;
+
+namespace алгоритм_Крускала
+{
+    class Program
+    {
+        static void Main()
+        {
+            int[,] matrix = {
+                { 0, 5, 0, 0, 2, 4 },
+                { 5, 0, 12, 0, 0, 1 },
+                { 0, 12, 0, 9, 0, 3 },
+                { 0, 0, 9, 0, 7, 10 },
+                { 2, 0, 0, 7, 0, 8 },
+                { 4, 1, 3, 10, 8, 0 }
+            };
+
+            int size = matrix.GetLength(0);
+            List<int> points = new List<int>();
+            for (int i = 1; i < size; i++) points.Add(i);
+
+            List<int> visited = new List<int> { 0 };
+            List<List<int>> searchArea = new List<List<int>>();
+            for (int i = 0; i < size; i++) searchArea.Add(new List<int>());
+            int totalWeight = 0;
+;
+
+            List<int> nodes = new List<int>();
+            for (int i = 0; i < size; i++) nodes.Add(i);
+
+            visited.Clear();
+            totalWeight = 0;
+            int maxWeight = 0;
+            foreach (int m in matrix) if (m > maxWeight) maxWeight = m;
+            int minWeight = maxWeight;
+            int iMin = 0, jMin = 0;
+
+            while (nodes.Count != 0)
+            {
+                if (nodes.Count == size)
+                {
+                    for (int i = 0; i < size; i++)
+                    {
+                        for (int j = i + 1; j < size; j++)
+                        {
+                            if (matrix[i, j] < minWeight && matrix[i, j] != 0)
+                            {
+                                minWeight = matrix[i, j];
+                                iMin = i;
+                                jMin = j;
+                            }
+                        }
+                    }
+                    totalWeight += minWeight;
+                    matrix[iMin, jMin] = 0;
+                    nodes.Remove(iMin);
+                    nodes.Remove(jMin);
+                    visited.Add(iMin);
+                    visited.Add(jMin);
+                    minWeight = maxWeight;
+                }
+                else
+                {
+                    for (int i = 0; i < size; i++)
+                    {
+                        for (int j = i + 1; j < size; j++)
+                        {
+                            if ((visited.Contains(i) ^ visited.Contains(j)) && matrix[i, j] < minWeight && matrix[i, j] != 0)
+                            {
+                                minWeight = matrix[i, j];
+                                iMin = i;
+                                jMin = j;
+                            }
+                        }
+                    }
+                    totalWeight += minWeight;
+                    matrix[iMin, jMin] = 0;
+                    if (!visited.Contains(iMin))
+                    {
+                        nodes.Remove(iMin);
+                        visited.Add(iMin);
+                    }
+                    else if (!visited.Contains(jMin))
+                    {
+                        nodes.Remove(jMin);
+                        visited.Add(jMin);
+                    }
+                    minWeight = maxWeight;
+                }
+            }
+
+            Console.WriteLine("Вес остовного дерев: " + totalWeight);
+        }
+    }
+}
