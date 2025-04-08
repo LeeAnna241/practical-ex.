@@ -17,55 +17,44 @@ namespace алгоритм_Прима
             };
 
             int size = matrix.GetLength(0);
-            List<int> points = new List<int>();
-            for (int i = 1; i < size; i++) points.Add(i);
-
             List<int> visited = new List<int> { 0 };
-            List<List<int>> searchArea = new List<List<int>>();
-            for (int i = 0; i < size; i++) searchArea.Add(new List<int>());
+            List<int> notVisited = new List<int>();
+            for (int i = 1; i < size; i++) notVisited.Add(i);
+
             int totalWeight = 0;
 
-            while (points.Count != 0)
+            while (notVisited.Count > 0)
             {
-                for (int i = 0; i < size; i++)
+                int min = int.MaxValue;
+                int from = -1, to = -1;
+
+                foreach (int i in visited)
                 {
-                    for (int j = 0; j < size; j++)
+                    foreach (int j in notVisited)
                     {
-                        if (visited.Contains(i) && !visited.Contains(j))
+                        if (matrix[i, j] != 0 && matrix[i, j] < min)
                         {
-                            if (matrix[i, j] != 0)
-                                searchArea[i].Add(matrix[i, j]);
+                            min = matrix[i, j];
+                            from = i;
+                            to = j;
                         }
                     }
                 }
 
-                int min = int.MaxValue, from = -1, to = -1;
-
-                for (int i = 0; i < searchArea.Count; i++)
+                if (to != -1)
                 {
-                    foreach (var value in searchArea[i])
-                    {
-                        if (value != 0 && value < min)
-                        {
-                            int j = Array.IndexOf(matrix, value, i * size);
-                            if (j >= 0 && j % size != i && !visited.Contains(j % size))
-                            {
-                                min = value;
-                                from = i;
-                                to = j % size;
-                            }
-                        }
-                        break;
-                    }
+                    totalWeight += min;
+                    visited.Add(to);
+                    notVisited.Remove(to);
                 }
-
-                totalWeight += min;
-                visited.Add(to);
-                points.Remove(to);
-                for (int i = 0; i < size; i++) searchArea[i].Clear();
+                else
+                {
+                    Console.WriteLine("Граф несвязный!");
+                    break;
+                }
             }
 
-            Console.WriteLine("Вес остовного дерева: " + totalWeight);
+            Console.WriteLine($"\nОбщий вес остовного дерева: {totalWeight}");
         }
     }
 }
