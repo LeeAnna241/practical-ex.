@@ -1,0 +1,142 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+namespace мосты
+{
+class Program
+{
+    static void Main()
+    {
+        int[,] matrix = {
+            {0, 5, 0, 0, 11, 0, 8},
+            {5, 0, 9, 0, 0, 0, 4},
+            {0, 9, 0, 0, 0, 15, 8},
+            {0, 0, 0, 0, 20, 0, 0},
+            {11, 0, 0, 20, 0, 19, 3},
+            {0, 0, 15, 0, 19, 0, 5},
+            {8, 4, 8, 0, 3, 5, 0}
+        };
+
+        List<(int, int)> mstEdges = SearchMSTEdges((int[,])matrix.Clone());
+
+        int size = matrix.GetLength(0);
+        for (int i = 0; i < size; i++)
+            for (int j = 0; j < size; j++)
+                matrix[i, j] = (matrix[i, j] != 0) ? 1 : 0;
+
+        int bridges = 0;
+
+        foreach (var edge in mstEdges)
+        {
+            int[,] copy = (int[,])matrix.Clone();
+            copy[edge.Item1, edge.Item2] = 0;
+            copy[edge.Item2, edge.Item1] = 0;
+
+            int components = CountComponents(copy);
+            if (components != 1)
+                bridges++;
+        }
+
+        Console.WriteLine($"Число мостов = {bridges}");
+    }
+
+    static List<(int, int)> SearchMSTEdges(int[,] matrix)
+    {
+        int size = matrix.GetLength(0);
+        List<int> points = Enumerable.Range(0, size).ToList();
+        List<int> visited = new List<int>();
+        List<(int, int)> edges = new List<(int, int)>();
+
+        int maxWeight = 0;
+        for (int i = 0; i < size; i++)
+            for (int j = 0; j < size; j++)
+                if (matrix[i, j] > maxWeight)
+                    maxWeight = matrix[i, j];
+
+        while (points.Count > 0)
+        {
+            int min = maxWeight + 1;
+            int i_min = -1, j_min = -1;
+
+            if (visited.Count == 0)
+            {
+                for (int i = 0; i < size; i++)
+                {
+                    for (int j = i + 1; j < size; j++)
+                    {
+                        if (matrix[i, j] != 0 && matrix[i, j] < min)
+                        {
+                            min = matrix[i, j];
+                            i_min = i;
+                            j_min = j;
+                        }
+                    }
+                }
+                matrix[i_min, j_min] = 0;
+                points.Remove(i_min);
+                points.Remove(j_min);
+                visited.Add(i_min);
+                visited.Add(j_min);
+                edges.Add((i_min, j_min));
+            }
+            else
+            {
+                for (int i = 0; i < size; i++)
+                {
+                    for (int j = i + 1; j < size; j++)
+                    {
+                        bool oneInVisited = visited.Contains(i) ^ visited.Contains(j);
+                        if (matrix[i, j] != 0 && oneInVisited && matrix[i, j] < min)
+                        {
+                            min = matrix[i, j];
+                            i_min = i;
+                            j_min = j;
+                        }
+                    }
+                }
+                matrix[i_min, j_min] = 0;
+                if (!visited.Contains(i_min))
+                {
+                    visited.Add(i_min);
+                    points.Remove(i_min);
+                }
+                else if (!visited.Contains(j_min))
+                {
+                    visited.Add(j_min);
+                    points.Remove(j_min);
+                }
+                edges.Add((i_min, j_min));
+            }
+        }
+
+        return edges;
+    }
+
+    static int CountComponents(int[,] matrix)
+    {
+        int size = matrix.GetLength(0);
+        bool[] visited = new bool[size];
+        int components = 0;
+
+        for (int i = 0; i < size; i++)
+        {
+            if (!visited[i])
+            {
+                Componenta(matrix, visited, i);
+                components++;
+            }
+        }
+        return components;
+    }
+    
+        static void Componenta(int[,] matrix, bool[] visited, int node)
+        {
+            visited[node] = true;
+            for (int i = 0; i < matrix.GetLength(0); i++)
+            {
+                if (matrix[node, i] == 1 && !visited[i])
+                    Componenta(matrix, visited, i);
+            }
+        }
+    }
+}
