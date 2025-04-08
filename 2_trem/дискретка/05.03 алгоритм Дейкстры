@@ -65,7 +65,7 @@ class Program
                 }
             }
 
-            current = next;
+             current = next;
         }
 
         Console.WriteLine("Длина маршрута = " + distance[end]);
