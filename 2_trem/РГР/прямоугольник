@@ -1,1 +1,73 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+namespace rectangle
+{
+
+    class Program
+    {
+        static int MaxRectangleArea(int[] heights)
+        {
+            Stack<int> stack = new Stack<int>();
+            int maxArea = 0;
+            int i = 0;
+            while (i < heights.Length)
+            {
+                if (stack.Count == 0 || heights[i] >= heights[stack.Peek()])
+                {
+                    stack.Push(i++);
+                }
+                else
+                {
+                    int top = stack.Pop();
+                    int width = stack.Count == 0 ? i : i - stack.Peek() - 1;
+                    maxArea = Math.Max(maxArea, heights[top] * width);
+                }
+            }
+            while (stack.Count > 0)
+            {
+                int top = stack.Pop();
+                int width = stack.Count == 0 ? i : i - stack.Peek() - 1;
+                maxArea = Math.Max(maxArea, heights[top] * width);
+            }
+            return maxArea;
+        }
+
+        static void Main()
+        {
+            var lines = File.ReadAllLines("D:\\Users\\User\\Desktop\\лабораторные работы\\РГР\\input_1.txt");
+            var dims = lines[0].Split();
+            int N = int.Parse(dims[0]);
+            int M = int.Parse(dims[1]);
+
+            int[,] grid = new int[M, N];
+            for (int i = 0; i < M; i++)
+                for (int j = 0; j < N; j++)
+                    grid[i, j] = 1; //свободная клетка
+
+            int K = int.Parse(lines[1]);
+            for (int i = 0; i < K; i++)
+            {
+                var parts = lines[2 + i].Split();
+                int x = int.Parse(parts[0]) - 1;
+                int y = int.Parse(parts[1]) - 1;
+                grid[y, x] = 0; //закрашенная клетка
+            }
+
+            int[] heights = new int[N];
+            int maxArea = 0;
+
+            for (int i = 0; i < M; i++)
+            {
+                for (int j = 0; j < N; j++)
+                {
+                    heights[j] = (grid[i, j] == 1) ? heights[j] + 1 : 0;
+                }
+                maxArea = Math.Max(maxArea, MaxRectangleArea(heights));
+            }
+
+            File.WriteAllText("D:\\Users\\User\\Desktop\\лабораторные работы\\РГР\\output_1.txt", maxArea.ToString());
+        }
+    }
+}
 
