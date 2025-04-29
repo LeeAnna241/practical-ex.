@@ -1,0 +1,70 @@
+using System;
+using System.IO;
+namespace Work_with_files
+{
+    class Program
+    {
+        static void Main()
+        {
+            string path = "D:\\Users\\User\\Desktop\\лабораторные работы\\АиП\\example.txt";
+            string path_output = "D:\\Users\\User\\Desktop\\лабораторные работы\\АиП\\example_output.txt";
+            FileInfo f = new FileInfo(path);
+            StreamReader sr = f.OpenText();
+            string s;
+            int count = 0;
+            string line;
+            int num = 0;
+            string lnums = "";
+            bool isCollecting = false;
+            TextReader reader = new StreamReader(path);
+            while ((line = reader.ReadLine()) != null)
+            {
+                count++;
+            }
+            reader.Close();
+
+            for (var i = 0; i < count; i++)
+            {
+                s = sr.ReadLine();
+                Console.WriteLine(s);
+                foreach(var symbol in s)
+                {
+                    if (char.IsDigit(symbol))
+                    {
+                        lnums += symbol;
+                        num = Convert.ToInt32(lnums);
+                        isCollecting = true;
+                    }
+                    else if (char.IsLetter(symbol))
+                    {
+                        if (isCollecting)
+                        {
+                            if (num % 2 == 0)
+                            {
+                                File.AppendAllText(path_output, s + Environment.NewLine);
+                            }
+                            lnums = "";
+                            num = 0;
+                            isCollecting = false;
+                        }
+                    }
+                }
+                if (isCollecting)
+                {
+                    num = Convert.ToInt32(lnums);
+                    if (num % 2 == 0)
+                    {
+                        File.AppendAllText(path_output, s + Environment.NewLine);
+                    }
+                    lnums = "";
+                    num = 0;
+                    isCollecting = false;
+                }
+                Console.WriteLine(lnums);
+                lnums = "";
+            }
+            sr.Close();
+            
+        }
+    }
+}
