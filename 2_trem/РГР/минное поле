@@ -1,0 +1,84 @@
+using System;
+using System.IO;
+
+class Program
+{
+    static void Main()
+    {
+        string inputPath = "D:\\Users\\User\\Desktop\\лабораторные работы\\РГР\\input_1.txt";
+        string outputPath = "D:\\Users\\User\\Desktop\\лабораторные работы\\РГР\\output_1.txt";
+
+        string[] lines = File.ReadAllLines(inputPath);
+        string[] firstLine = lines[0].Split();
+        int n = int.Parse(firstLine[0]);
+        int m = int.Parse(firstLine[1]);
+
+        int[,] mines = new int[n, m];
+        int[,] dp = new int[n, m];      
+        int[,] path = new int[n, m];     
+
+        for (int i = 0; i < n; i++)
+        {
+            string[] row = lines[i + 1].Split();
+            for (int j = 0; j < m; j++)
+            {
+                mines[i, j] = int.Parse(row[j]);
+            }
+        }
+
+        for (int j = 0; j < m; j++)
+        {
+            dp[0, j] = mines[0, j];
+            path[0, j] = -1;
+        }
+
+        for (int i = 1; i < n; i++)
+        {
+            for (int j = 0; j < m; j++)
+            {
+                int minPrev = dp[i - 1, j];
+                int prevCol = j;
+
+                if (j > 0 && dp[i - 1, j - 1] < minPrev)
+                {
+                    minPrev = dp[i - 1, j - 1];
+                    prevCol = j - 1;
+                }
+
+                if (j < m - 1 && dp[i - 1, j + 1] < minPrev)
+                {
+                    minPrev = dp[i - 1, j + 1];
+                    prevCol = j + 1;
+                }
+
+                dp[i, j] = mines[i, j] + minPrev;
+                path[i, j] = prevCol;
+            }
+        }
+
+        int minTotal = dp[n - 1, 0];
+        int endCol = 0;
+        for (int j = 1; j < m; j++)
+        {
+            if (dp[n - 1, j] < minTotal)
+            {
+                minTotal = dp[n - 1, j];
+                endCol = j;
+            }
+        }
+        int[] resultPath = new int[n];
+        int currentCol = endCol;
+        for (int i = n - 1; i >= 0; i--)
+        {
+            resultPath[i] = currentCol + 1; 
+            currentCol = path[i, currentCol];
+        }
+        using (StreamWriter sw = new StreamWriter(outputPath))
+        {
+            foreach (int col in resultPath)
+            {
+                sw.WriteLine(col);
+            }
+        }
+    }
+}
