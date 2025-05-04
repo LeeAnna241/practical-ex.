@@ -1,0 +1,57 @@
+using System;
+using System.Globalization;
+using System.IO;
+
+class Program
+{
+    static double DegreesToRadians(double degrees)
+    {
+        return degrees * Math.PI / 180.0;
+    }
+    static void Main()
+    {
+            string inputPath = "D:\\Users\\User\\Desktop\\лабораторные работы\\РГР\\input_1.txt";
+            string outputPath = "D:\\Users\\User\\Desktop\\лабораторные работы\\РГР\\output_1.txt";
+
+            string[] lines = File.ReadAllLines(inputPath);
+            string[] parts1 = lines[0].Split(' ');
+            string[] parts2 = lines[1].Split(' ');
+
+            if (parts1.Length != 2 || parts2.Length != 2)
+                throw new FormatException("Неверный формат широты и долготы.");
+
+            if (!int.TryParse(parts1[0], out int S1) ||
+                !int.TryParse(parts1[1], out int D1) ||
+                !int.TryParse(parts2[0], out int S2) ||
+                !int.TryParse(parts2[1], out int D2) ||
+                !int.TryParse(lines[2], out int R))
+            {
+                throw new FormatException("Не удалось преобразовать входные данные в числа.");
+            }
+
+            if (S1 < -90 || S1 > 90 || S2 < -90 || S2 > 90)
+                throw new ArgumentOutOfRangeException("Широта должна быть в диапазоне [-90, 90].");
+            if (D1 < 0 || D1 >= 360 || D2 < 0 || D2 >= 360)
+                throw new ArgumentOutOfRangeException("Долгота должна быть в диапазоне [0, 359].");
+            if (R < 1 || R > 30000)
+                throw new ArgumentOutOfRangeException("Радиус должен быть в диапазоне [1, 30000].");
+
+            double lat1 = DegreesToRadians(S1);
+            double lon1 = DegreesToRadians(D1);
+            double lat2 = DegreesToRadians(S2);
+            double lon2 = DegreesToRadians(D2);
+
+            double deltaLon = Math.Abs(lon1 - lon2);
+
+            double cosCentralAngle = Math.Sin(lat1) * Math.Sin(lat2) +
+                                     Math.Cos(lat1) * Math.Cos(lat2) * Math.Cos(deltaLon);
+
+            cosCentralAngle = Math.Max(-1.0, Math.Min(1.0, cosCentralAngle));
+
+            double centralAngle = Math.Acos(cosCentralAngle);
+
+            double distance = R * centralAngle;
+
+            File.WriteAllText(outputPath, distance.ToString("F3", CultureInfo.InvariantCulture));
+    }
+}
