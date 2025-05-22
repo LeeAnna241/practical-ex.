@@ -1,0 +1,198 @@
+using System;
+using System.Linq;
+using System.Runtime.ExceptionServices;
+using System.Runtime.Serialization.Formatters;
+namespace lab_14_05
+{
+    class Car
+    {
+        public int car_id { get; set; }
+        public string car_name { get; set; }
+        public string car_model { get; set; }
+
+        public Car(int car_id, string car_name, string cat_model)
+        {
+            this.car_id = car_id;
+            this.car_name = car_name;
+            this.car_model = car_model;
+        }
+    }
+    class User
+    {
+        public int user_id { get; set; }
+        public string user_name { get; set; }
+
+        public User(int user_num, string user_name)
+        {
+            this.user_id = user_num;
+            this.user_name = user_name;
+        }
+    }
+    class Car_Service
+    {
+        public int car_id { get; set; }
+        public int user_id { get; set; }
+        public string[] date { get; set; }
+        public string[] service { get; set; }
+        public int[] cost { get; set; }
+
+
+        public Car_Service(int car_id, int user_id, int size)
+        {
+            this.car_id = car_id;
+            this.user_id = user_id;
+            date = new string[size];
+            service = new string[size];
+            cost = new int[size];
+        }
+    }
+    class Program
+    {
+        static void Main()
+        {
+            Console.WriteLine("Введите количество автомобилей: ");
+            int n = Convert.ToInt32(Console.ReadLine());
+            Car[] car = new Car[n];
+            
+
+            Console.WriteLine("Введите количество пользователей: ");
+            int m = Convert.ToInt32(Console.ReadLine());
+            User[] user = new User[m];
+            Car_Service[] serve = new Car_Service[m];
+
+            while (true)
+            {
+                Console.WriteLine("1. Заполнить таблицы");
+                Console.WriteLine("2. Информация о товарах ");
+                Console.WriteLine("3. Выход");
+
+                int choice = Convert.ToInt32(Console.ReadLine());
+
+                if (choice == 1)
+                {
+                    for (int i = 0; i < n; i++)
+                    {
+                        Console.WriteLine("Введите id машины:");
+                        int id = Convert.ToInt32(Console.ReadLine());
+
+                        Console.WriteLine("Введите наименование марки:");
+                        string name = Console.ReadLine();
+
+                        Console.WriteLine("Введите наименование модели:");
+                        string mname = Console.ReadLine();
+
+                        car[i] = new Car(id, name, mname);
+
+                    }
+                    for (int i = 0; i < m; i++)
+                    {
+                        Console.WriteLine("Введите id пользователя: ");
+                        int id = Convert.ToInt32(Console.ReadLine());
+
+                        Console.WriteLine("Введите ФИО пользователя: ");
+                        string name = Console.ReadLine();
+
+                        user[i] = new User(id, name);
+
+                    }
+                    for (int i = 0; i < n; i++)
+                    {
+                        Console.WriteLine(".Введите id машины: ");
+                        int c_id = Convert.ToInt32(Console.ReadLine());
+
+                        Console.WriteLine(".Введите id пользователя:");
+                        int u_id = Convert.ToInt32(Console.ReadLine());
+
+                        Console.WriteLine(".Сколько раз пользователь обращался в автосервис?: ");
+                        int a = Convert.ToInt32(Console.ReadLine());
+
+                        serve[i] = new Car_Service(c_id, u_id, a);
+
+                        for (int j = 0; j < a; j++)
+                        {
+                            Console.WriteLine(".Введите дату поставки(гггг.мм.чч): ");
+                            string d = Console.ReadLine();
+                            serve[i].date[j] = d;
+
+                            Console.WriteLine(".Введите услугу: ");
+                            string s = Console.ReadLine();
+                            serve[i].service[j] = s;
+
+                            Console.WriteLine(".Введите стоимость услуги: ");
+                            int c = Convert.ToInt32(Console.ReadLine());
+                            serve[i].cost[j] = c;
+                        }
+                    }
+                }
+                else if (choice == 2)
+                {
+                    Console.WriteLine("1. Пользователи сгруппированные по марке машины");
+                    Console.WriteLine("2. Пользователи сгруппированных по дате обращения в автосервис");
+                    Console.WriteLine("3. На какую сумму оказаны услуги в заданный интервал времени(гггг.мм.чч гггг.мм.чч)");
+
+                    int choice_2 = Convert.ToInt32(Console.ReadLine());
+
+                    if (choice_2 == 1)
+                    {
+                        var mark_group = from g in serve
+                                         join mk in car on g.car_id equals mk.car_id
+                                         join u in user on g.user_id equals u.user_id
+                                         group new { g, mk, u } by mk.car_name into grouped
+                                         select new { gr = grouped, car_name = grouped.Key};
+
+                        foreach(var y in mark_group)
+                        {
+                            Console.WriteLine($"Марка: {y.car_name}");
+                            foreach(var t in y.gr)
+                            {
+                                Console.WriteLine($"Пользователь: {t.u.user_name}, модель: {t.mk.car_model}");
+                            }
+                        }
+                    }
+                    if (choice_2 == 2)
+                    {
+                        var date_group = from g in serve
+                                         join u in user on g.user_id equals u.user_id
+                                         from idx in Enumerable.Range(0, g.date.Length)
+                                         let d = g.date[idx]
+                                         let serv = g.service[idx]
+                                         orderby serv
+                                         group new { d, serv} by d into grouped
+                                         select grouped;
+
+                        foreach(var k in date_group)
+                        {
+                            Console.WriteLine($"Дата: {k.Key}");
+                            foreach(var sv in k)
+                            {
+                                Console.WriteLine($"Услуга: {sv.serv}");
+                            }
+
+                        }
+                    }
+                    if (choice_2 == 3)
+                    {
+                        DateTime start = new DateTime(2023, 9, 27);
+                        DateTime end = new DateTime(2025, 8, 11);
+                        int final_cost = 0;
+                        foreach(var h in serve)
+                        {
+                            for (int p = 0; p < h.date.Length; p++)
+                            {
+                                for (DateTime dates = start; dates <= end; dates = dates.AddDays(1))
+                                {
+                                    if(dates.ToString("yyyy.MM.dd") == h.date[p])
+                                    {
+                                        final_cost += h.cost[p];
+                                    }
+                                }
+                            }
+                        }
+                        Console.WriteLine($"С {start} по {end} услуши оказаны на сумму: {final_cost}");
+                    }
+                }
+                else if (choice == 3) break;
+            }
+        }
+    }
+}
