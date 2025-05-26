@@ -1,0 +1,102 @@
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        int[,] matrix = new int[,]
+        {
+            {0, 1, 0, 0, 3},
+            {0, 0, 8, 7, 1},
+            {0, 0, 0, 1, -5},
+            {0, 0, 2, 0, 0},
+            {0, 0, 0, 4, 0}
+        };
+
+        int size = matrix.GetLength(0);
+        int[,] infMatrix = new int[size, size];
+
+        for (int i = 0; i < size; i++)
+        {
+            for (int j = 0; j < size; j++)
+            {
+                infMatrix[i, j] = matrix[i, j] == 0 ? int.MaxValue : matrix[i, j];
+            }
+        }
+
+        int[,] table = new int[size, size];
+        for (int i = 0; i < size; i++)
+        {
+            for (int j = 0; j < size; j++)
+            {
+                table[i, j] = int.MaxValue;
+            }
+        }
+        table[0, 0] = 0;
+
+        for (int k = 1; k < size; k++)
+        {
+            for (int i = 0; i < size; i++)
+            {
+                for (int j = 0; j < size; j++)
+                {
+                    if (infMatrix[j, i] != int.MaxValue && table[j, k - 1] != int.MaxValue)
+                    {
+                        if (table[j, k - 1] + infMatrix[j, i] < table[i, k])
+                        {
+                            table[i, k] = table[j, k - 1] + infMatrix[j, i];
+                        }
+                    }
+                }
+            }
+        }
+
+        int[,] tableCopy = (int[,])table.Clone();
+        for (int k = 1; k < size; k++)
+        {
+            for (int i = 0; i < size; i++)
+            {
+                for (int j = 0; j < size; j++)
+                {
+                    if (infMatrix[j, i] != int.MaxValue && tableCopy[j, k - 1] != int.MaxValue)
+                    {
+                        if (tableCopy[j, k - 1] + infMatrix[j, i] < tableCopy[i, k])
+                        {
+                            tableCopy[i, k] = tableCopy[j, k - 1] + infMatrix[j, i];
+                        }
+                    }
+                }
+            }
+        }
+
+        bool hasNegativeCycle = false;
+        for (int i = 0; i < size; i++)
+        {
+            for (int j = 0; j < size; j++)
+            {
+                if (table[i, j] != tableCopy[i, j])
+                {
+                    hasNegativeCycle = true;
+                    break;
+                }
+            }
+            if (hasNegativeCycle) break;
+        }
+
+        if (!hasNegativeCycle)
+        {
+            for (int i = 0; i < size; i++)
+            {
+                for (int j = 0; j < size; j++)
+                {
+                    Console.Write(table[i, j] == int.MaxValue ? "∞ " : table[i, j] + " ");
+                }
+                Console.WriteLine();
+            }
+        }
+        else
+        {
+            Console.WriteLine("В графе есть отрицательный цикл");
+        }
+    }
+}
