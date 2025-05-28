@@ -1,0 +1,97 @@
+using System;
+using System.Runtime.ExceptionServices;
+using System.Xml.Linq;
+namespace lab_28_05
+{
+    unsafe struct Object
+    {
+        public int number;
+        public string oper;
+        public Object* l;
+        public Object* r;
+
+        public Object(int number, string oper, Object* l = null, Object* r = null)
+        {
+            this.number = number;
+            this.oper = oper;
+            this.l = l;
+            this.r = r;
+        }
+    }
+    unsafe class id
+    {
+
+        unsafe static void Main()
+        {
+            Object obj_1 = new Object(25, "mts");
+            Object* head = &obj_1;
+            Object obj_2 = new Object(27, "BeeLine");
+            Object obj_3 = new Object(15, "T2");
+            Object obj_4 = new Object(13, "Yota");
+            Object obj_5 = new Object(1, "mts");
+            Object obj_6 = new Object(3, "mts");
+
+
+            LorRbranch(head, &obj_2);
+            LorRbranch(head, &obj_3);
+            LorRbranch(head, &obj_4);
+            LorRbranch(head, &obj_5);
+            LorRbranch(head, &obj_6);
+
+            Console.WriteLine("Левая ветка:");
+            LeftPrint(head->l);
+
+            Console.WriteLine("Корень:");
+            Console.WriteLine($"id: {head->number}, оператор: {head->oper}");
+
+            Console.WriteLine("Правая ветка:");
+            RightPrint(head->r);
+        }
+        public static void LorRbranch(Object* ob1, Object* ob2)
+        {
+            if (ob1 == null || ob2 == null) return;
+
+            if (ob1->number < ob2->number)
+            {
+                if (ob1->r == null)
+                {
+                    ob1->r = ob2;
+                }
+                else
+                {
+                    LorRbranch(ob1->r, ob2);
+                }
+            }
+            else if (ob1->number > ob2->number)
+            {
+                if (ob1->l == null)
+                {
+                    ob1->l = ob2;
+                }
+                else
+                {
+                    LorRbranch(ob1->l, ob2);
+                }
+            }
+        }
+        public static void LeftPrint(Object* obj)
+        {
+            if (obj != null)
+            {
+                LeftPrint(obj->l);
+                Console.WriteLine($"id: {obj->number}, оператор: {obj->oper}");
+                LeftPrint(obj->r);
+            }
+        }
+
+        public static void RightPrint(Object* obj)
+        {
+            if (obj != null)
+            {
+                RightPrint(obj->l);
+                Console.WriteLine($"id: {obj->number}, оператор: {obj->oper}");
+                RightPrint(obj->r);
+            }
+        }
+    }
+}
