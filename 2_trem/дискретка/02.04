@@ -1,0 +1,113 @@
+using System;
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("Введите координаты начальной вершины - ");
+        int x1 = int.Parse(Console.ReadLine());
+        int y1 = int.Parse(Console.ReadLine());
+
+        Console.WriteLine("Введите координаты конечной вершины - ");
+        int x2 = int.Parse(Console.ReadLine());
+        int y2 = int.Parse(Console.ReadLine());
+
+        int[,] matrix = {
+            { 0, 0, 0, -1, -1 },
+            { 0, -1, 0, 0, 0 },
+            { 0, -1, 0, -1, 0 },
+            { 0, 0, 0, -1, 0 },
+            { 0, 0, 0, -1, 0 }
+        };
+
+        int rows = matrix.GetLength(0);
+        int cols = matrix.GetLength(1);
+        int[,] newMatrix = new int[rows + 2, cols + 2];
+
+        for (int i = 0; i < rows + 2; i++)
+        {
+            for (int j = 0; j < cols + 2; j++)
+            {
+                if (i == 0 || j == 0 || i == rows + 1 || j == cols + 1)
+                {
+                    newMatrix[i, j] = -1;
+                }
+                else
+                {
+                    newMatrix[i, j] = matrix[i - 1, j - 1];
+                }
+            }
+        }
+
+        bool flag = true;
+        int[,] matrixCopy = new int[rows + 2, cols + 2];
+
+        if (newMatrix[x1 - 1, y1] != -1)
+            newMatrix[x1 - 1, y1] += 1;
+        if (newMatrix[x1 + 1, y1] != -1)
+            newMatrix[x1 + 1, y1] += 1;
+        if (newMatrix[x1, y1 - 1] != -1)
+            newMatrix[x1, y1 - 1] += 1;
+        if (newMatrix[x1, y1 + 1] != -1)
+            newMatrix[x1, y1 + 1] += 1;
+
+        while (ContainsZero(newMatrix) && flag)
+        {
+            for (int i = 1; i < rows + 1; i++)
+            {
+                for (int j = 1; j < cols + 1; j++)
+                {
+                    if (newMatrix[i, j] != 0 && newMatrix[i, j] != -1)
+                    {
+                        if (newMatrix[i - 1, j] == 0)
+                            newMatrix[i - 1, j] = newMatrix[i, j] + 1;
+                        if (newMatrix[i + 1, j] == 0)
+                            newMatrix[i + 1, j] = newMatrix[i, j] + 1;
+                        if (newMatrix[i, j - 1] == 0)
+                            newMatrix[i, j - 1] = newMatrix[i, j] + 1;
+                        if (newMatrix[i, j + 1] == 0)
+                            newMatrix[i, j + 1] = newMatrix[i, j] + 1;
+                    }
+                }
+            }
+
+            if (AreEqual(newMatrix, matrixCopy))
+            {
+                flag = false;
+            }
+            else
+            {
+                matrixCopy = (int[,])newMatrix.Clone();
+            }
+        }
+
+        if (!flag)
+        {
+            Console.WriteLine("Невозможно достичь конечной вершины");
+        }
+        else
+        {
+            Console.WriteLine("Число шагов = " + newMatrix[x2, y2]);
+        }
+    }
+    static bool ContainsZero(int[,] matrix)
+    {
+        foreach (int val in matrix)
+        {
+            if (val == 0)
+                return true;
+        }
+        return false;
+    }
+    static bool AreEqual(int[,] a, int[,] b)
+    {
+        for (int i = 0; i < a.GetLength(0); i++)
+        {
+            for (int j = 0; j < a.GetLength(1); j++)
+            {
+                if (a[i, j] != b[i, j])
+                    return false;
+            }
+        }
+        return true;
+    }
+}
